@@ -420,8 +420,8 @@
           </orgs>
         </org>
         
-        <queueConfig isUseInternalQueue="true" maxProducers="5"  maxConsumers="5" taskQueueName="TremoloUnisonTaskQueue" smtpQueueName="TremoloUnisonSMTPQueue" encryptionKeyName="session-unison">
-        </queueConfig>
+<!--         <queueConfig isUseInternalQueue="true" maxProducers="5"  maxConsumers="5" taskQueueName="TremoloUnisonTaskQueue" smtpQueueName="TremoloUnisonSMTPQueue" encryptionKeyName="session-unison">
+        </queueConfig> -->
         
         <portal/>
         

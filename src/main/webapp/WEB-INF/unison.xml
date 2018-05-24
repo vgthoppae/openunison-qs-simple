@@ -422,6 +422,7 @@
         
 <!--         <queueConfig isUseInternalQueue="true" maxProducers="5"  maxConsumers="5" taskQueueName="TremoloUnisonTaskQueue" smtpQueueName="TremoloUnisonSMTPQueue" encryptionKeyName="session-unison">
         </queueConfig> -->
+        <queueConfig isUseInternalQueue="true" maxProducers="1" connectionFactory="com.tremolosecurity.provisioning.jms.providers.AwsSqsConnectionFactory" maxConsumers="1" taskQueueName="TremoloUnisonTaskQueue" smtpQueueName="TremoloUnisonSMTPQueue" encryptionKeyName="session-unison"/>        
         
         <portal/>
         

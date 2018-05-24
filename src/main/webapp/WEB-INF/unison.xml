@@ -83,7 +83,7 @@
 
     <application name="ScaleJS" azTimeoutMillis="30000" >    
       <urls>
-        <url regex="false" authChain="formLogin" overrideHost="true" overrideReferer="true">
+        <url regex="false" authChain="loginForm" overrideHost="true" overrideReferer="true">
           <host>#[OU_HOST]</host>
           <filterChain>
             <filter class="com.tremolosecurity.proxy.filters.RemovePrefix">
@@ -101,7 +101,7 @@
             <rule scope="dn" constraint="o=Tremolo" />
           </azRules>
         </url>
-        <url regex="false" authChain="formLogin" overrideHost="true" overrideReferer="true">
+        <url regex="false" authChain="loginForm" overrideHost="true" overrideReferer="true">
           <host>#[OU_HOST]</host>
           <filterChain>
             <filter class="com.tremolosecurity.scalejs.password.ws.ScalePassword">
@@ -272,7 +272,21 @@
           <param name="noUserSplash" value="/auth/forms/pwdResetNoUser.jsp"/>
         </params>
       </authMech>
-    </chain>    
+    </chain>  
+    <chain name="loginForm" level="20">
+      <authMech>
+        <name>loginForm</name>
+        <required>required</required>
+        <params>
+          <!-- Path to the login form -->
+          <param name="FORMLOGIN_JSP" value="/auth/forms/login.jsp"/>
+          <!-- Either an attribute name OR an ldap filter mapping the form parameters. If this is an ldap filter, form parameters are identified by ${parameter} -->
+          <param name="uidAttr" value="uid"/>
+          <!-- If true, the user is determined based on an LDAP filter rather than a simple user lookup -->
+          <param name="uidIsFilter" value="false"/>
+        </params>
+      </authMech>
+    </chain>      
   </authChains>
   <resultGroups>
     <!-- The name attribute is how the resultGroup is referenced in the URL -->

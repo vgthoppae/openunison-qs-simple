@@ -330,7 +330,7 @@
                 <param name="name" value="mail"/>
                 <param name="nameAttr" value="uid"/>
               </customTask>
-              <provision sync="true" target="freeipa" setPassword="true" onlyPassedInAttributes="true" >
+              <provision sync="true" target="ldap2" setPassword="true" onlyPassedInAttributes="true" >
                 <attributes>
                   <value>uid</value>
                 </attributes>

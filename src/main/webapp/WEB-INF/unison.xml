@@ -279,7 +279,7 @@
         <required>required</required>
         <params>
           <!-- Path to the login form -->
-          <param name="FORMLOGIN_JSP" value="/auth/forms/login.jsp"/>
+          <param name="FORMLOGIN_JSP" value="/auth/forms/defaultForm.jsp"/>
           <!-- Either an attribute name OR an ldap filter mapping the form parameters. If this is an ldap filter, form parameters are identified by ${parameter} -->
           <param name="uidAttr" value="uid"/>
           <!-- If true, the user is determined based on an LDAP filter rather than a simple user lookup -->

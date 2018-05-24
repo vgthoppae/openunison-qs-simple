@@ -233,7 +233,7 @@
         <!-- Validation query to make sure the connection is still available -->
         <param name="validationQuery" value="#[OU_JDBC_VALIDATION]"/>
 
-        <param name="hibernateCreateSchema" value="false"/>
+        <!-- <param name="hibernateCreateSchema" value="false"/> -->
       </init>
       <params>
       </params>
@@ -387,7 +387,7 @@
           <password>#[OU_JDBC_PASSWORD]</password>
           <maxConns>10</maxConns>
           <maxIdleConns>10</maxIdleConns>
-          <hibernateProperty name="hibernate.hbm2ddl.auto" value="validate" />
+          <!-- <hibernateProperty name="hibernate.hbm2ddl.auto" value="validate" /> -->
           <userIdAttribute>uid</userIdAttribute>
           <approverAttributes>
             <value>givenName</value>

@@ -134,6 +134,8 @@
               <param name="validator.params" value="attributesToCheck=Last Name=sn"/>
               <param name="validator.params" value="attributesToCheck=User Name=uid"/>
               <param name="validator.params" value="attributesToCheck=First Name=givenName"/>
+
+              <param name="synchronous" value="true" />
             </filter>
           </filterChain>
           <uri>/scale-reset/password</uri>

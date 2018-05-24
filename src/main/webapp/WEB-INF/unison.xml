@@ -378,6 +378,7 @@
             </mapping>
           </tasks>
         </workflow>
+    </workflows>        
         <approvalDB>
           <hibernateDialect>#[OU_HIBERNATE_DIALECT]</hibernateDialect>
           <driver>#[OU_JDBC_DRIVER]</driver>
@@ -547,6 +548,5 @@
           <dataFields>Value</dataFields>
         </report>
       </reports>
-    </workflows>
   </provisioning>
   </tremoloConfig>

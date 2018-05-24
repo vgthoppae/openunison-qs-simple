@@ -178,7 +178,7 @@
         <!-- Database driver -->
         <param name="driver" value="#[OU_JDBC_DRIVER]"/>
         <!-- JDBC URL -->
-        <param name="url" value="#[OU_JDBC_PWD_URL]"/>
+        <param name="url" value="#[OU_JDBC_URL]"/>
         <!-- DB User -->
         <param name="user" value="#[OU_JDBC_USER]"/>
         <!-- DB Password -->

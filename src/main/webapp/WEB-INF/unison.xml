@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tremoloConfig xmlns="http://www.tremolosecurity.com/tremoloConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tremolosecurity.com/tremoloConfig tremoloConfig.xsd">
   <applications openSessionCookieName="openSession" openSessionTimeout="9000">
-    <application name="LoginTest" azTimeoutMillis="30000" >
+    <application azTimeoutMillis="30000" name="LoginTest">
       <urls>
         <!-- The regex attribute defines if the proxyTo tag should be interpreted with a regex or not -->
         <!-- The authChain attribute should be the name of an authChain -->
-        <url regex="false" authChain="formloginFilter" overrideHost="true" overrideReferer="true">
+        <url authChain="formloginFilter" overrideHost="true" overrideReferer="true" regex="false">
           <!-- Any number of host tags may be specified to allow for an application to work on multiple hosts.  Additionally an asterick (*) can be specified to make this URL available for ALL hosts -->
           <host>#[OU_HOST]</host>
           <!-- The filterChain allows for transformations of the request such as manipulating attributes and injecting headers -->
@@ -21,8 +21,7 @@
           <proxyTo>http://dnm${fullURI}</proxyTo>
           <!-- List the various results that should happen -->
           <results>
-            <azSuccess>
-            </azSuccess>
+            <azSuccess/>
           </results>
           <!-- Determine if the currently logged in user may access the resource.  If ANY rule succeeds, the authorization succeeds.
           The scope may be one of group, dn, filter, dynamicGroup or custom
@@ -32,15 +31,15 @@
             * dynamicGroup - The DN of the dynamic group in OpenUnison's virtual directory (must be an instance of groupOfUrls)
             * custom - An implementation of com.tremolosecurity.proxy.az.CustomAuthorization -->
           <azRules>
-            <rule scope="dn" constraint="o=Tremolo" />
+            <rule constraint="o=Tremolo" scope="dn"/>
           </azRules>
         </url>
-        <url regex="false" authChain="formloginFilter" overrideHost="true" overrideReferer="true">
+        <url authChain="formloginFilter" overrideHost="true" overrideReferer="true" regex="false">
           <!-- Any number of host tags may be specified to allow for an application to work on multiple hosts.  Additionally an asterick (*) can be specified to make this URL available for ALL hosts -->
           <host>#[OU_HOST]</host>
           <!-- The filterChain allows for transformations of the request such as manipulating attributes and injecting headers -->
           <filterChain>
-            <filter class="com.tremolosecurity.prelude.filters.StopProcessing" />
+            <filter class="com.tremolosecurity.prelude.filters.StopProcessing"/>
           </filterChain>
           <!-- The URI (aka path) of this URL -->
           <uri>/logout</uri>
@@ -58,7 +57,7 @@
                       * dynamicGroup - The DN of the dynamic group in OpenUnison's virtual directory (must be an instance of groupOfUrls)
                       * custom - An implementation of com.tremolosecurity.proxy.az.CustomAuthorization -->
           <azRules>
-            <rule scope="dn" constraint="o=Tremolo" />
+            <rule constraint="o=Tremolo" scope="dn"/>
           </azRules>
         </url>
       </urls>
@@ -80,10 +79,9 @@
         <scope>-1</scope>
       </cookieConfig>
     </application>
-
-    <application name="ScaleJS" azTimeoutMillis="30000" >    
+    <application azTimeoutMillis="30000" name="ScaleJS">
       <urls>
-        <url regex="false" authChain="loginForm" overrideHost="true" overrideReferer="true">
+        <url authChain="loginForm" overrideHost="true" overrideReferer="true" regex="false">
           <host>#[OU_HOST]</host>
           <filterChain>
             <filter class="com.tremolosecurity.proxy.filters.RemovePrefix">
@@ -98,14 +96,13 @@
             <azFail>noauaz</azFail>
           </results>
           <azRules>
-            <rule scope="dn" constraint="o=Tremolo" />
+            <rule constraint="o=Tremolo" scope="dn"/>
           </azRules>
         </url>
-        <url regex="false" authChain="loginForm" overrideHost="true" overrideReferer="true">
+        <url authChain="loginForm" overrideHost="true" overrideReferer="true" regex="false">
           <host>#[OU_HOST]</host>
           <filterChain>
             <filter class="com.tremolosecurity.scalejs.password.ws.ScalePassword">
-              <!-- The name of the attribute that stores the value to be displayed when referencing the currently logged in user, ie cn or displayName -->
               <param name="displayNameAttribute" value="displayName"/>
               <!-- The title to show on the home page -->
               <param name="frontPage.title" value="FreeIPA Password Reset"/>
@@ -134,8 +131,7 @@
               <param name="validator.params" value="attributesToCheck=Last Name=sn"/>
               <param name="validator.params" value="attributesToCheck=User Name=uid"/>
               <param name="validator.params" value="attributesToCheck=First Name=givenName"/>
-
-              <param name="synchronous" value="true" />
+              <param name="synchronous" value="true"/>
             </filter>
           </filterChain>
           <uri>/scale-reset/password</uri>
@@ -144,9 +140,71 @@
             <azFail>noauaz</azFail>
           </results>
           <azRules>
-            <rule scope="dn" constraint="o=Tremolo" />
+            <rule constraint="o=Tremolo" scope="dn"/>
           </azRules>
-        </url>        
+        </url> 
+        <url authChain="resetPassword" overrideHost="true" overrideReferer="true" regex="false">
+          <host>#[OU_HOST]</host>
+          <filterChain>
+            <filter class="com.tremolosecurity.proxy.filters.RemovePrefix">
+              <param name="prefix" value="/scale-reset"/>
+              <param name="attributeName" value="trimmedURI"/>
+            </filter>
+          </filterChain>
+          <uri>/scale-reset</uri>
+          <proxyTo>https://cdn.rawgit.com/TremoloSecurity/OpenUnison/1.0.13/unison/unison-scalejs-password/src/main/html${trimmedURI}
+                </proxyTo>
+          <results>
+            <auFail>noauaz</auFail>
+            <azFail>noauaz</azFail>
+          </results>
+          <azRules>
+            <rule constraint="o=Tremolo" scope="dn"/>
+          </azRules>
+        </url>
+        <url authChain="resetPassword" overrideHost="true" overrideReferer="true" regex="false">
+          <host>#[OU_HOST]</host>
+          <filterChain>
+            <filter class="com.tremolosecurity.scalejs.password.ws.ScalePassword">
+              <param name="displayNameAttribute" value="displayName"/>
+              <!--  The title to show on the home page  -->
+              <param name="frontPage.title" value="FreeIPA Password Reset"/>
+              <!--  Sub text for the home page  -->
+              <param name="frontPage.text" value="Please enter your new password. Your password must have an upper case, lower case, numeric and special character. The password must be at least 8 characters long and not longer then 20. Also, 3 consecutive characters from your first name, last name or user id can not appear in it."/>
+              <!--  The URL to access ScaleMain  -->
+              <param name="homeURL" value="/scale/index.html"/>
+              <!--  The URL to redirect the user to when they logout  -->
+              <param name="logoutURL" value="/logout"/>
+              <!-- The name of the attribute that identifies the user uniquely  -->
+              <param name="uidAttributeName" value="uid"/>
+              <!--  Reason for the workflow  -->
+              <param name="reason" value="Password reset"/>
+              <!--  Workflow for the password reset call  -->
+              <param name="workflowName" value="ipa-password-self-reset"/>
+              <!-- Implementation of com.tremolosecurity.scalejs.password.sdk.PasswordValidator  -->
+              <param name="validatorClassName" value="com.tremolosecurity.scalejs.password.validators.ActiveDirectoryValidator"/>
+              <!--  List of parameters for the validator  -->
+              <param name="validator.params" value="requireLower=true"/>
+              <param name="validator.params" value="requireUpper=true"/>
+              <param name="validator.params" value="requireNumber=true"/>
+              <param name="validator.params" value="requireSpecial=true"/>
+              <param name="validator.params" value="minRequirements=4"/>
+              <param name="validator.params" value="maxChars=20"/>
+              <param name="validator.params" value="minChars=8"/>
+              <param name="validator.params" value="attributesToCheck=Last Name=sn"/>
+              <param name="validator.params" value="attributesToCheck=User Name=uid"/>
+              <param name="validator.params" value="attributesToCheck=First Name=givenName"/>
+            </filter>
+          </filterChain>
+          <uri>/scale-reset/password</uri>
+          <results>
+            <auFail>noauaz</auFail>
+            <azFail>noauaz</azFail>
+          </results>
+          <azRules>
+            <rule constraint="o=Tremolo" scope="dn"/>
+          </azRules>
+        </url>
       </urls>
       <!-- The cookie configuration determines how sessions are managed for this application -->
       <cookieConfig>
@@ -164,7 +222,7 @@
         <timeout>900</timeout>
         <!-- required but ignored -->
         <scope>-1</scope>
-      </cookieConfig>      
+      </cookieConfig>
     </application>
   </applications>
   <myvdConfig>WEB-INF/myvd.conf</myvdConfig>
@@ -172,8 +230,7 @@
     <mechanism name="loginForm">
       <uri>/auth/formLogin</uri>
       <className>com.tremolosecurity.proxy.auth.FormLoginAuthMech</className>
-      <init>
-      </init>
+      <init/>
       <params>
         <param>FORMLOGIN_JSP</param>
       </params>
@@ -185,10 +242,9 @@
         <!-- The RDN of unauthenticated users -->
         <param name="userName" value="uid=Anonymous"/>
         <!-- Any number of attributes can be added to the anonymous user -->
-        <param name="role" value="Users" />
+        <param name="role" value="Users"/>
       </init>
-      <params>
-      </params>
+      <params/>
     </mechanism>
     <mechanism name="passwordReset">
       <uri>/auth/passwdReset</uri>
@@ -232,24 +288,21 @@
         <param name="dialect" value="#[OU_HIBERNATE_DIALECT]"/>
         <!-- Validation query to make sure the connection is still available -->
         <param name="validationQuery" value="#[OU_JDBC_VALIDATION]"/>
-
-        <!-- <param name="hibernateCreateSchema" value="false"/> -->
+        <!-- <param name="hibernateCreateSchema" value="false"/>-->
       </init>
-      <params>
-      </params>
-    </mechanism>    
+      <params/>
+    </mechanism>
   </authMechs>
   <authChains>
     <!-- An anonymous authentication chain MUST be level 0 -->
-    <chain name="anon" level="0">
+    <chain level="0" name="anon">
       <authMech>
         <name>anonymous</name>
         <required>required</required>
-        <params>
-        </params>
+        <params/>
       </authMech>
     </chain>
-    <chain name="formloginFilter" level="1">
+    <chain level="1" name="formloginFilter">
       <authMech>
         <name>loginForm</name>
         <required>required</required>
@@ -260,10 +313,10 @@
           <param name="uidAttr" value="uid"/>
           <!-- If true, the user is determined based on an LDAP filter rather than a simple user lookup -->
           <param name="uidIsFilter" value="false"/>
-        </params>        
+        </params>
       </authMech>
     </chain>
-    <chain name="resetPassword" level="5">
+    <chain level="5" name="resetPassword">
       <authMech>
         <name>passwordReset</name>
         <required>required</required>
@@ -276,8 +329,8 @@
           <param name="noUserSplash" value="/auth/forms/pwdResetNoUser.jsp"/>
         </params>
       </authMech>
-    </chain>  
-    <chain name="loginForm" level="20">
+    </chain>
+    <chain level="20" name="loginForm">
       <authMech>
         <name>loginForm</name>
         <required>required</required>
@@ -290,7 +343,7 @@
           <param name="uidIsFilter" value="false"/>
         </params>
       </authMech>
-    </chain>      
+    </chain>
   </authChains>
   <resultGroups>
     <!-- The name attribute is how the resultGroup is referenced in the URL -->
@@ -308,26 +361,25 @@
   </resultGroups>
   <keyStorePath>#[unisonKeystorePath]</keyStorePath>
   <keyStorePassword>#[unisonKeystorePassword]</keyStorePassword>
-
   <provisioning>
     <targets>
-      <target name="ldap2" className="com.tremolosecurity.provisioning.core.providers.LDAPProvider">
+      <target className="com.tremolosecurity.provisioning.core.providers.LDAPProvider" name="ldap2">
         <params>
           <!-- The object class for new user objects -->
-          <param name="objectClass" value="inetOrgPerson" />
+          <param name="objectClass" value="inetOrgPerson"/>
           <!-- Host for the ldap server       -->
-          <param name="host" value="#[OpenDJ_HOST]" />
+          <param name="host" value="#[OpenDJ_HOST]"/>
           <!-- The port to connect to -->
-          <param name="port" value="#[OpenDJ_PORT]" />
+          <param name="port" value="#[OpenDJ_PORT]"/>
           <!-- A DN for a user with administrator rights to create and update accounts -->
-          <param name="adminDN" value="#[OpenDJ_BIND_USER]" />
+          <param name="adminDN" value="#[OpenDJ_BIND_USER]"/>
           <!-- Credential passwords   -->
-          <param name="adminPasswd" value="#[OpenDJ_BIND_PASSWORD]" />
+          <param name="adminPasswd" value="#[OpenDJ_BIND_PASSWORD]"/>
           <!-- The DN pattern for new users with user attributes in ${}       -->
-          <!-- <param name="dnPattern" value="uid=${uid},ou=internal,dc=domain,dc=com" /> -->
-          <param name="dnPattern" value="#[OpenDJ_USERS_DN_PATTERN]" />
+          <!-- <param name="dnPattern" value="uid=${uid},ou=internal,dc=domain,dc=com" />-->
+          <param name="dnPattern" value="#[OpenDJ_USERS_DN_PATTERN]"/>
           <!-- The base that should be used for searching for users and groups        -->
-          <param name="searchBase" value="#[OpenDJ_BASE]" />
+          <param name="searchBase" value="#[OpenDJ_BASE]"/>
           <!-- The name of the attribute used to identify the user    -->
           <param name="userIDAttribute" value="uid"/>
           <!-- If set to true SSL is used for the connection  -->
@@ -337,24 +389,24 @@
           <!-- Maximum number of individual operations per connection -->
           <param name="threadsPerCons" value="10"/>
           <!-- Millisconds an idle connection can stay open -->
-          <param name="idleTimeout" value="90000" />
+          <param name="idleTimeout" value="90000"/>
           <!-- Allow for users from outside the directory to be provisioned into directory groups -->
-          <param name="allowExternalUsers" value="false" />
+          <param name="allowExternalUsers" value="false"/>
         </params>
         <!-- User mappings -->
-        <targetAttribute name="uid" sourceType="user" source="TREMOLO_USER_ID" />
-        <targetAttribute name="sn" sourceType="user" source="sn" />
-        <targetAttribute name="l" sourceType="user" source="l" />
-        <targetAttribute name="cn" sourceType="user" source="cn" />
-        <targetAttribute name="givenName" sourceType="user" source="givenName" />
-      </target>      
-    </targets>  
+        <targetAttribute name="uid" source="TREMOLO_USER_ID" sourceType="user"/>
+        <targetAttribute name="sn" source="sn" sourceType="user"/>
+        <targetAttribute name="l" source="l" sourceType="user"/>
+        <targetAttribute name="cn" source="cn" sourceType="user"/>
+        <targetAttribute name="givenName" source="givenName" sourceType="user"/>
+      </target>
+    </targets>
     <workflows>
-      <workflow  name="ipa-password-self-reset" label="FreeIPA User Self Service Password Update" description="Password self service update from ScaleJS" inList="false" orgid="687da09f-8ec1-48ac-b035-f2f182b9bd1e">
+      <workflow description="Password self service update from ScaleJS" inList="false" label="FreeIPA User Self Service Password Update" name="ipa-password-self-reset" orgid="687da09f-8ec1-48ac-b035-f2f182b9bd1e">
         <tasks>
-          <mapping  strict="true">
+          <mapping strict="true">
             <map>
-              <mapping targetAttributeName="uid" sourceType="user" targetAttributeSource="uid"/>
+              <mapping sourceType="user" targetAttributeName="uid" targetAttributeSource="uid"/>
             </map>
             <onSuccess>
               <customTask className="com.tremolosecurity.provisioning.customTasks.LoadGroups">
@@ -365,188 +417,181 @@
                 <param name="name" value="mail"/>
                 <param name="nameAttr" value="uid"/>
               </customTask>
-              <provision sync="true" target="ldap2" setPassword="true" onlyPassedInAttributes="true" >
+              <provision onlyPassedInAttributes="true" setPassword="true" sync="true" target="ldap2">
                 <attributes>
                   <value>uid</value>
                 </attributes>
               </provision>
-              <notifyUser subject="Your password has been updated" mailAttrib="mail">
+              <notifyUser mailAttrib="mail" subject="Your password has been updated">
                 <msg>Your profile has been updated.  If you didn't update your password, please contact support immediately.
                 </msg>
               </notifyUser>
-              </onSuccess>
-            </mapping>
-          </tasks>
-        </workflow>
-    </workflows>        
-        <approvalDB>
-          <hibernateDialect>#[OU_HIBERNATE_DIALECT]</hibernateDialect>
-          <driver>#[OU_JDBC_DRIVER]</driver>
-          <url>#[OU_JDBC_URL]</url>
-          <user>#[OU_JDBC_USER]</user>
-          <password>#[OU_JDBC_PASSWORD]</password>
-          <maxConns>10</maxConns>
-          <maxIdleConns>10</maxIdleConns>
-          <!-- <hibernateProperty name="hibernate.hbm2ddl.auto" value="validate" /> -->
-          <userIdAttribute>uid</userIdAttribute>
-          <approverAttributes>
-            <value>givenName</value>
-            <value>sn</value>
-            <value>mail</value>
-            <value>uid</value>
-          </approverAttributes>
-          <userAttributes>
-            <value>givenName</value>
-            <value>sn</value>
-            <value>mail</value>
-            <value>uid</value>
-          </userAttributes>
-          <enabled>true</enabled>
-          <smtpHost>#[SMTP_HOST]</smtpHost>
-          <smtpPort>#[SMTP_PORT]</smtpPort>
-          <smtpUser>#[SMTP_USER]</smtpUser>
-          <smtpPassword>#[SMTP_PASSWORD]</smtpPassword>
-          <smtpSubject>Awaiting Approvals</smtpSubject>
-          <smtpFrom>#[SMTP_FROM]</smtpFrom>
-          <smtpTLS>#[SMTP_TLS]</smtpTLS>
-          <encryptionKey>session-unison</encryptionKey>
-          <smtpUseSOCKSProxy>false</smtpUseSOCKSProxy>
-          <smtpSOCKSProxyHost>
-          </smtpSOCKSProxyHost>
-          <smtpSOCKSProxyPort>0</smtpSOCKSProxyPort>
-          <smtpLocalhost>localhost</smtpLocalhost>
-          <validationQuery>#[OU_JDBC_VALIDATION]</validationQuery>
-        </approvalDB>      
-        <org name="MyOrg" description="MyOrg Enterprise Applications" uuid="687da09f-8ec1-48ac-b035-f2f182b9bd1e">
-          <orgs name="Audit Reports" description="Reports for auditors" uuid="fc8799cf-b947-4626-94bd-1ddda226bc16">
-            <azRules>
-              <rule scope="group" constraint="cn=#[OU_AUDITOR_GROUP],cn=groups,ou=freeipa,o=Tremolo"/>
-            </azRules>
-          </orgs>
-        </org>
-        
-<!--         <queueConfig isUseInternalQueue="true" maxProducers="5"  maxConsumers="5" taskQueueName="TremoloUnisonTaskQueue" smtpQueueName="TremoloUnisonSMTPQueue" encryptionKeyName="session-unison">
-        </queueConfig> -->
-        <queueConfig isUseInternalQueue="true" maxProducers="1" connectionFactory="com.tremolosecurity.provisioning.jms.providers.AwsSqsConnectionFactory" maxConsumers="1" taskQueueName="TremoloUnisonTaskQueue" smtpQueueName="TremoloUnisonSMTPQueue" encryptionKeyName="session-unison"/>        
-        
-        <portal/>
-        
-        <scheduler useDB="false" threadCount="3" instanceLabel="testing" instanceIPMask="127"/>
-        
-        <listeners/>
-
-        <reports>
-          <report orgID="687da09f-8ec1-48ac-b035-f2f182b9bd1e" name="My Open Requests" description="List of your currently open requests and the approvers responsible for acting on them" groupBy="id" groupings="true">
-            <paramater>currentUser</paramater>
-            <sql>select  approvals.id,approvals.label AS Approval ,approvals.createTS AS `Approval Opened`,workflows.name AS `Workflow Name`,workflows.label AS `Workflow Label`,workflows.requestReason AS `Request Reason`, concat((SELECT value FROM userAttributes WHERE userAttributes.name='givenName' AND userid=users.id),' ',(SELECT value FROM userAttributes WHERE userAttributes.name='sn' AND userid=users.id)) as `Subject Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) as `Subject Email`, (SELECT value FROM approverAttributes WHERE name='givenName' AND approverid=approvers.id) as `First Name`,(SELECT value FROM approverAttributes WHERE name='sn' AND approverid=approvers.id) as `Last Name`,(SELECT value FROM approverAttributes WHERE name='mail' AND approverid=approvers.id) as `Email`  from approvals inner join workflows on approvals.workflow=workflows.id inner join users on workflows.userid=users.id inner join allowedApprovers on approvals.id=allowedApprovers.approval inner join approvers on approvers.id=allowedApprovers.approver where users.userKey=? AND approvedTS is null order by approvals.createTS ASC, approvals.id ASC</sql>
-            <headerFields>Approval</headerFields>
-            <headerFields>Subject Name</headerFields>
-            <headerFields>Subject Email</headerFields>
-            <headerFields>Workflow Name</headerFields>
-            <headerFields>Workflow Label</headerFields>
-            <headerFields>Request Reason</headerFields>
-            <dataFields>First Name</dataFields>
-            <dataFields>Last Name</dataFields>
-            <dataFields>Email</dataFields>
-          </report>
-          <report orgID="687da09f-8ec1-48ac-b035-f2f182b9bd1e" name="Approvals Completed by Me" description="All approvals you approved or denied" groupBy="wid" groupings="false">
-            <paramater>currentUser</paramater>
-            <sql>select  workflows.id AS wid, approvals.id AS aid,approvals.label AS Approval ,approvals.createTS AS `Approval Opened`,workflows.name AS `Workflow Name`,workflows.label AS `Workflow Label`,workflows.requestReason AS `Request Reason`, concat((SELECT value FROM userAttributes WHERE name='givenName' AND userid=users.id),' ',(SELECT value FROM userAttributes WHERE name='sn' AND userid=users.id)) as `Subject Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) as `Subject Email`, (SELECT value FROM approverAttributes WHERE name='givenName' AND approverid=approvers.id) as `First Name`,(SELECT value FROM approverAttributes WHERE name='sn' AND approverid=approvers.id) as `Last Name`,(SELECT value FROM approverAttributes WHERE name='mail' AND approverid=approvers.id) as `Email`,IF(approvals.approved = 1, 'Approved', 'Rejected') AS `Approval Result`,approvals.approvedTS AS `Approved Date`,approvals.reason AS Reason from approvals inner join approvers on approvals.approver=approvers.id inner join workflows on workflows.id=approvals.workflow inner join users on users.id=workflows.userid WHERE approvers.userKey=? order by approvals.approvedTS DESC; </sql>
-            <dataFields>Workflow Name</dataFields>
-            <dataFields>Workflow Label</dataFields>
-            <dataFields>Subject Name</dataFields>
-            <dataFields>Subject Email</dataFields>
-            <dataFields>Request Reason</dataFields>
-            <dataFields>Approval</dataFields>
-            <dataFields>Approval Result</dataFields>
-            <dataFields>Approved Date</dataFields>
-          </report>
-          <report orgID="fc8799cf-b947-4626-94bd-1ddda226bc16" name="Open Approvals" description="Lists all of the approvals that are currently waiting action" groupBy="id" groupings="true">
-            <sql>select&#xD;
-            &#xD;
-            approvals.id,approvals.label AS Approval ,approvals.createTS AS `Approval Opened`,workflows.name AS `Workflow Name`,workflows.label AS `Workflow Label`,workflows.requestReason AS `Request Reason`,&#xD;
-            concat((SELECT value FROM userAttributes WHERE name='givenName' AND userid=users.id),' ',(SELECT value FROM userAttributes WHERE name='sn' AND userid=users.id)) as `Subject Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) as `Subject Email`,&#xD;
-            (SELECT value FROM approverAttributes WHERE name='givenName' AND approverid=approvers.id) as `First Name`,(SELECT value FROM approverAttributes WHERE name='sn' AND approverid=approvers.id) as `Last Name`,(SELECT value FROM approverAttributes WHERE name='mail' AND approverid=approvers.id) as `Email`&#xD;
-            &#xD;
-            from approvals inner join workflows on approvals.workflow=workflows.id inner join users on workflows.userid=users.id inner join allowedApprovers on approvals.id=allowedApprovers.approval inner join approvers on approvers.id=allowedApprovers.approver where approvedTS is null&#xD;
+            </onSuccess>
+          </mapping>
+        </tasks>
+      </workflow>
+    </workflows>
+    <approvalDB>
+      <hibernateDialect>#[OU_HIBERNATE_DIALECT]</hibernateDialect>
+      <driver>#[OU_JDBC_DRIVER]</driver>
+      <url>#[OU_JDBC_URL]</url>
+      <user>#[OU_JDBC_USER]</user>
+      <password>#[OU_JDBC_PASSWORD]</password>
+      <maxConns>10</maxConns>
+      <maxIdleConns>10</maxIdleConns>
+      <!-- <hibernateProperty name="hibernate.hbm2ddl.auto" value="validate" />-->
+      <userIdAttribute>uid</userIdAttribute>
+      <approverAttributes>
+        <value>givenName</value>
+        <value>sn</value>
+        <value>mail</value>
+        <value>uid</value>
+      </approverAttributes>
+      <userAttributes>
+        <value>givenName</value>
+        <value>sn</value>
+        <value>mail</value>
+        <value>uid</value>
+      </userAttributes>
+      <enabled>true</enabled>
+      <smtpHost>#[SMTP_HOST]</smtpHost>
+      <smtpPort>#[SMTP_PORT]</smtpPort>
+      <smtpUser>#[SMTP_USER]</smtpUser>
+      <smtpPassword>#[SMTP_PASSWORD]</smtpPassword>
+      <smtpSubject>Awaiting Approvals</smtpSubject>
+      <smtpFrom>#[SMTP_FROM]</smtpFrom>
+      <smtpTLS>#[SMTP_TLS]</smtpTLS>
+      <encryptionKey>session-unison</encryptionKey>
+      <smtpUseSOCKSProxy>false</smtpUseSOCKSProxy>
+      <smtpSOCKSProxyHost/>
+      <smtpSOCKSProxyPort>0</smtpSOCKSProxyPort>
+      <smtpLocalhost>localhost</smtpLocalhost>
+      <validationQuery>#[OU_JDBC_VALIDATION]</validationQuery>
+    </approvalDB>
+    <org description="MyOrg Enterprise Applications" name="MyOrg" uuid="687da09f-8ec1-48ac-b035-f2f182b9bd1e">
+      <orgs description="Reports for auditors" name="Audit Reports" uuid="fc8799cf-b947-4626-94bd-1ddda226bc16">
+        <azRules>
+          <rule constraint="cn=#[OU_AUDITOR_GROUP],cn=groups,ou=freeipa,o=Tremolo" scope="group"/>
+        </azRules>
+      </orgs>
+    </org>
+    <!--         <queueConfig isUseInternalQueue="true" maxProducers="5"  maxConsumers="5" taskQueueName="TremoloUnisonTaskQueue" smtpQueueName="TremoloUnisonSMTPQueue" encryptionKeyName="session-unison"></queueConfig>-->
+    <queueConfig connectionFactory="com.tremolosecurity.provisioning.jms.providers.AwsSqsConnectionFactory" encryptionKeyName="session-unison" isUseInternalQueue="true" maxConsumers="1" maxProducers="1" smtpQueueName="TremoloUnisonSMTPQueue" taskQueueName="TremoloUnisonTaskQueue"/>
+    <portal/>
+    <scheduler instanceIPMask="127" instanceLabel="testing" threadCount="3" useDB="false"/>
+    <listeners/>
+    <reports>
+      <report description="List of your currently open requests and the approvers responsible for acting on them" groupBy="id" groupings="true" name="My Open Requests" orgID="687da09f-8ec1-48ac-b035-f2f182b9bd1e">
+        <paramater>currentUser</paramater>
+        <sql>select  approvals.id,approvals.label AS Approval ,approvals.createTS AS `Approval Opened`,workflows.name AS `Workflow Name`,workflows.label AS `Workflow Label`,workflows.requestReason AS `Request Reason`, concat((SELECT value FROM userAttributes WHERE userAttributes.name='givenName' AND userid=users.id),' ',(SELECT value FROM userAttributes WHERE userAttributes.name='sn' AND userid=users.id)) as `Subject Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) as `Subject Email`, (SELECT value FROM approverAttributes WHERE name='givenName' AND approverid=approvers.id) as `First Name`,(SELECT value FROM approverAttributes WHERE name='sn' AND approverid=approvers.id) as `Last Name`,(SELECT value FROM approverAttributes WHERE name='mail' AND approverid=approvers.id) as `Email`  from approvals inner join workflows on approvals.workflow=workflows.id inner join users on workflows.userid=users.id inner join allowedApprovers on approvals.id=allowedApprovers.approval inner join approvers on approvers.id=allowedApprovers.approver where users.userKey=? AND approvedTS is null order by approvals.createTS ASC, approvals.id ASC</sql>
+        <headerFields>Approval</headerFields>
+        <headerFields>Subject Name</headerFields>
+        <headerFields>Subject Email</headerFields>
+        <headerFields>Workflow Name</headerFields>
+        <headerFields>Workflow Label</headerFields>
+        <headerFields>Request Reason</headerFields>
+        <dataFields>First Name</dataFields>
+        <dataFields>Last Name</dataFields>
+        <dataFields>Email</dataFields>
+      </report>
+      <report description="All approvals you approved or denied" groupBy="wid" groupings="false" name="Approvals Completed by Me" orgID="687da09f-8ec1-48ac-b035-f2f182b9bd1e">
+        <paramater>currentUser</paramater>
+        <sql>select  workflows.id AS wid, approvals.id AS aid,approvals.label AS Approval ,approvals.createTS AS `Approval Opened`,workflows.name AS `Workflow Name`,workflows.label AS `Workflow Label`,workflows.requestReason AS `Request Reason`, concat((SELECT value FROM userAttributes WHERE name='givenName' AND userid=users.id),' ',(SELECT value FROM userAttributes WHERE name='sn' AND userid=users.id)) as `Subject Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) as `Subject Email`, (SELECT value FROM approverAttributes WHERE name='givenName' AND approverid=approvers.id) as `First Name`,(SELECT value FROM approverAttributes WHERE name='sn' AND approverid=approvers.id) as `Last Name`,(SELECT value FROM approverAttributes WHERE name='mail' AND approverid=approvers.id) as `Email`,IF(approvals.approved = 1, 'Approved', 'Rejected') AS `Approval Result`,approvals.approvedTS AS `Approved Date`,approvals.reason AS Reason from approvals inner join approvers on approvals.approver=approvers.id inner join workflows on workflows.id=approvals.workflow inner join users on users.id=workflows.userid WHERE approvers.userKey=? order by approvals.approvedTS DESC; </sql>
+        <dataFields>Workflow Name</dataFields>
+        <dataFields>Workflow Label</dataFields>
+        <dataFields>Subject Name</dataFields>
+        <dataFields>Subject Email</dataFields>
+        <dataFields>Request Reason</dataFields>
+        <dataFields>Approval</dataFields>
+        <dataFields>Approval Result</dataFields>
+        <dataFields>Approved Date</dataFields>
+      </report>
+      <report description="Lists all of the approvals that are currently waiting action" groupBy="id" groupings="true" name="Open Approvals" orgID="fc8799cf-b947-4626-94bd-1ddda226bc16">
+        <sql>select
+            
+            approvals.id,approvals.label AS Approval ,approvals.createTS AS `Approval Opened`,workflows.name AS `Workflow Name`,workflows.label AS `Workflow Label`,workflows.requestReason AS `Request Reason`,
+            concat((SELECT value FROM userAttributes WHERE name='givenName' AND userid=users.id),' ',(SELECT value FROM userAttributes WHERE name='sn' AND userid=users.id)) as `Subject Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) as `Subject Email`,
+            (SELECT value FROM approverAttributes WHERE name='givenName' AND approverid=approvers.id) as `First Name`,(SELECT value FROM approverAttributes WHERE name='sn' AND approverid=approvers.id) as `Last Name`,(SELECT value FROM approverAttributes WHERE name='mail' AND approverid=approvers.id) as `Email`
+            
+            from approvals inner join workflows on approvals.workflow=workflows.id inner join users on workflows.userid=users.id inner join allowedApprovers on approvals.id=allowedApprovers.approval inner join approvers on approvers.id=allowedApprovers.approver where approvedTS is null
             order by approvals.createTS ASC, approvals.id ASC</sql>
-            <headerFields>Approval</headerFields>
-            <headerFields>Subject Name</headerFields>
-            <headerFields>Subject Email</headerFields>
-            <headerFields>Workflow Name</headerFields>
-            <headerFields>Workflow Label</headerFields>
-            <headerFields>Request Reason</headerFields>
-            <dataFields>First Name</dataFields>
-            <dataFields>Last Name</dataFields>
-            <dataFields>Email</dataFields>
-          </report>
-          <report orgID="fc8799cf-b947-4626-94bd-1ddda226bc16" name="Completed Approvals" description="All approvals completed in a given set of dates" groupBy="wid" groupings="true">
-            <paramater>beginDate</paramater>
-            <paramater>endDate</paramater>
-            <sql>select &#xD;
-            workflows.id AS wid, approvals.id AS aid,approvals.label AS Approval ,approvals.createTS AS `Approval Opened`,workflows.name AS `Workflow Name`,workflows.label AS `Workflow Label`,workflows.requestReason AS `Request Reason`,&#xD;
-            concat((SELECT value FROM userAttributes WHERE name='givenName' AND userid=users.id),' ',(SELECT value FROM userAttributes WHERE name='sn' AND userid=users.id)) as `Subject Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) as `Subject Email`,&#xD;
-            (SELECT value FROM approverAttributes WHERE name='givenName' AND approverid=approvers.id) as `First Name`,(SELECT value FROM approverAttributes WHERE name='sn' AND approverid=approvers.id) as `Last Name`,(SELECT value FROM approverAttributes WHERE name='mail' AND approverid=approvers.id) as `Email`,IF(approvals.approved = 1, 'Approved', 'Rejected') AS `Approval Result`,approvals.approvedTS AS `Approved Date`,approvals.reason AS Reason&#xD;
-            from approvals inner join approvers on approvals.approver=approvers.id inner join workflows on workflows.id=approvals.workflow inner join users on users.id=workflows.userid WHERE approvals.approvedTS &gt;= ? AND approvals.approvedTS &lt;= ? order by approvals.id ASC,workflows.id ASC;&#xD;
+        <headerFields>Approval</headerFields>
+        <headerFields>Subject Name</headerFields>
+        <headerFields>Subject Email</headerFields>
+        <headerFields>Workflow Name</headerFields>
+        <headerFields>Workflow Label</headerFields>
+        <headerFields>Request Reason</headerFields>
+        <dataFields>First Name</dataFields>
+        <dataFields>Last Name</dataFields>
+        <dataFields>Email</dataFields>
+      </report>
+      <report description="All approvals completed in a given set of dates" groupBy="wid" groupings="true" name="Completed Approvals" orgID="fc8799cf-b947-4626-94bd-1ddda226bc16">
+        <paramater>beginDate</paramater>
+        <paramater>endDate</paramater>
+        <sql>select 
+            workflows.id AS wid, approvals.id AS aid,approvals.label AS Approval ,approvals.createTS AS `Approval Opened`,workflows.name AS `Workflow Name`,workflows.label AS `Workflow Label`,workflows.requestReason AS `Request Reason`,
+            concat((SELECT value FROM userAttributes WHERE name='givenName' AND userid=users.id),' ',(SELECT value FROM userAttributes WHERE name='sn' AND userid=users.id)) as `Subject Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) as `Subject Email`,
+            (SELECT value FROM approverAttributes WHERE name='givenName' AND approverid=approvers.id) as `First Name`,(SELECT value FROM approverAttributes WHERE name='sn' AND approverid=approvers.id) as `Last Name`,(SELECT value FROM approverAttributes WHERE name='mail' AND approverid=approvers.id) as `Email`,IF(approvals.approved = 1, 'Approved', 'Rejected') AS `Approval Result`,approvals.approvedTS AS `Approved Date`,approvals.reason AS Reason
+            from approvals inner join approvers on approvals.approver=approvers.id inner join workflows on workflows.id=approvals.workflow inner join users on users.id=workflows.userid WHERE approvals.approvedTS &gt;= ? AND approvals.approvedTS &lt;= ? order by approvals.id ASC,workflows.id ASC;
           </sql>
-          <headerFields>Workflow Name</headerFields>
-          <headerFields>Workflow Label</headerFields>
-          <headerFields>Subject Name</headerFields>
-          <headerFields>Subject Email</headerFields>
-          <headerFields>Request Reason</headerFields>
-          <dataFields>Approval</dataFields>
-          <dataFields>First Name</dataFields>
-          <dataFields>Last Name</dataFields>
-          <dataFields>Email</dataFields>
-          <dataFields>Approval Result</dataFields>
-        </report>
-        <report orgID="fc8799cf-b947-4626-94bd-1ddda226bc16" name="Single User Change Log" description="All changes to the chosen user" groupBy="id" groupings="true">
-          <paramater>userKey</paramater>
-          <sql>select&#xD;
-          (SELECT value FROM userAttributes WHERE userAttributes.name='givenName' AND userid=users.id) AS `First Name`, (SELECT value FROM userAttributes WHERE userAttributes.name='sn' AND userid=users.id) AS `Last Name`, (SELECT value FROM userAttributes WHERE userAttributes.name='mail' AND userid=users.id) AS `Email Address` ,workflows.id,&#xD;
-          workflows.name as `Workflow Name`,workflows.label AS `Workflow Label`,workflows.startTS AS `Workflow Started`,workflows.completeTS AS `Workflow Completed`,workflows.requestReason AS `Request Reason`,&#xD;
-          auditLogType.name  AS `Action`,CASE WHEN isEntry = 1 THEN 'Object' ELSE 'Attribute' END AS `Target Type`,auditLogs.attribute AS `Name`,auditLogs.val AS `Value`&#xD;
-          &#xD;
-          &#xD;
-           from users inner join auditLogs on users.id=auditLogs.userid inner join auditLogType on auditLogType.id=auditLogs.actionType inner join workflows on workflows.id=auditLogs.workflow where users.userKey=?&#xD;
+        <headerFields>Workflow Name</headerFields>
+        <headerFields>Workflow Label</headerFields>
+        <headerFields>Subject Name</headerFields>
+        <headerFields>Subject Email</headerFields>
+        <headerFields>Request Reason</headerFields>
+        <dataFields>Approval</dataFields>
+        <dataFields>First Name</dataFields>
+        <dataFields>Last Name</dataFields>
+        <dataFields>Email</dataFields>
+        <dataFields>Approval Result</dataFields>
+      </report>
+      <report description="All changes to the chosen user" groupBy="id" groupings="true" name="Single User Change Log" orgID="fc8799cf-b947-4626-94bd-1ddda226bc16">
+        <paramater>userKey</paramater>
+        <sql>select
+          (SELECT value FROM userAttributes WHERE userAttributes.name='givenName' AND userid=users.id) AS `First Name`, (SELECT value FROM userAttributes WHERE userAttributes.name='sn' AND userid=users.id) AS `Last Name`, (SELECT value FROM userAttributes WHERE userAttributes.name='mail' AND userid=users.id) AS `Email Address` ,workflows.id,
+          workflows.name as `Workflow Name`,workflows.label AS `Workflow Label`,workflows.startTS AS `Workflow Started`,workflows.completeTS AS `Workflow Completed`,workflows.requestReason AS `Request Reason`,
+          auditLogType.name  AS `Action`,CASE WHEN isEntry = 1 THEN 'Object' ELSE 'Attribute' END AS `Target Type`,auditLogs.attribute AS `Name`,auditLogs.val AS `Value`
+          
+          
+           from users inner join auditLogs on users.id=auditLogs.userid inner join auditLogType on auditLogType.id=auditLogs.actionType inner join workflows on workflows.id=auditLogs.workflow where users.userKey=?
            order by workflows.completeTS ASC ,workflows.id ASC , auditLogs.isEntry DESC</sql>
-          <headerFields>Workflow Name</headerFields>
-          <headerFields>Workflow Label</headerFields>
-          <headerFields>Request Reason</headerFields>
-          <headerFields>Workflow Started</headerFields>
-          <headerFields>Workflow Completed</headerFields>
-          <headerFields>First Name</headerFields>
-          <headerFields>Last Name</headerFields>
-          <headerFields>Email Address</headerFields>
-          <dataFields>Action</dataFields>
-          <dataFields>Target Type</dataFields>
-          <dataFields>Name</dataFields>
-          <dataFields>Value</dataFields>
-        </report>
-        <report orgID="fc8799cf-b947-4626-94bd-1ddda226bc16" name="Change Log for Period" description="Changes to all users between the two selected dates" groupBy="id" groupings="true">
-          <paramater>beginDate</paramater>
-          <paramater>endDate</paramater>
-          <sql>select&#xD;
-          (SELECT value FROM userAttributes WHERE name='givenName' AND userid=users.id) AS `First Name`, (SELECT value FROM userAttributes WHERE name='sn' AND userid=users.id) AS `Last Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) AS `Email Address` ,workflows.id,&#xD;
-          workflows.name as `Workflow Name`,workflows.label AS `Workflow Label`,workflows.startTS AS `Workflow Started`,workflows.completeTS AS `Workflow Completed`,workflows.requestReason AS `Request Reason`,&#xD;
-          auditLogType.name  AS `Action`,CASE WHEN isEntry = 1 THEN 'Object' ELSE 'Attribute' END AS `Target Type`,auditLogs.attribute AS `Name`,auditLogs.val AS `Value`&#xD;
-          &#xD;
-          &#xD;
-           from users inner join auditLogs on users.id=auditLogs.userid inner join auditLogType on auditLogType.id=auditLogs.actionType inner join workflows on workflows.id=auditLogs.workflow where workflows.completeTS &gt;= ? and workflows.completeTS &lt;= ?&#xD;
+        <headerFields>Workflow Name</headerFields>
+        <headerFields>Workflow Label</headerFields>
+        <headerFields>Request Reason</headerFields>
+        <headerFields>Workflow Started</headerFields>
+        <headerFields>Workflow Completed</headerFields>
+        <headerFields>First Name</headerFields>
+        <headerFields>Last Name</headerFields>
+        <headerFields>Email Address</headerFields>
+        <dataFields>Action</dataFields>
+        <dataFields>Target Type</dataFields>
+        <dataFields>Name</dataFields>
+        <dataFields>Value</dataFields>
+      </report>
+      <report description="Changes to all users between the two selected dates" groupBy="id" groupings="true" name="Change Log for Period" orgID="fc8799cf-b947-4626-94bd-1ddda226bc16">
+        <paramater>beginDate</paramater>
+        <paramater>endDate</paramater>
+        <sql>select
+          (SELECT value FROM userAttributes WHERE name='givenName' AND userid=users.id) AS `First Name`, (SELECT value FROM userAttributes WHERE name='sn' AND userid=users.id) AS `Last Name`, (SELECT value FROM userAttributes WHERE name='mail' AND userid=users.id) AS `Email Address` ,workflows.id,
+          workflows.name as `Workflow Name`,workflows.label AS `Workflow Label`,workflows.startTS AS `Workflow Started`,workflows.completeTS AS `Workflow Completed`,workflows.requestReason AS `Request Reason`,
+          auditLogType.name  AS `Action`,CASE WHEN isEntry = 1 THEN 'Object' ELSE 'Attribute' END AS `Target Type`,auditLogs.attribute AS `Name`,auditLogs.val AS `Value`
+          
+          
+           from users inner join auditLogs on users.id=auditLogs.userid inner join auditLogType on auditLogType.id=auditLogs.actionType inner join workflows on workflows.id=auditLogs.workflow where workflows.completeTS &gt;= ? and workflows.completeTS &lt;= ?
            order by workflows.completeTS ASC ,workflows.id ASC , auditLogs.isEntry DESC</sql>
-          <headerFields>Workflow Name</headerFields>
-          <headerFields>Workflow Label</headerFields>
-          <headerFields>Request Reason</headerFields>
-          <headerFields>Workflow Started</headerFields>
-          <headerFields>Workflow Completed</headerFields>
-          <headerFields>First Name</headerFields>
-          <headerFields>Last Name</headerFields>
-          <headerFields>Email Address</headerFields>
-          <dataFields>Action</dataFields>
-          <dataFields>Target Type</dataFields>
-          <dataFields>Name</dataFields>
-          <dataFields>Value</dataFields>
-        </report>
-      </reports>
+        <headerFields>Workflow Name</headerFields>
+        <headerFields>Workflow Label</headerFields>
+        <headerFields>Request Reason</headerFields>
+        <headerFields>Workflow Started</headerFields>
+        <headerFields>Workflow Completed</headerFields>
+        <headerFields>First Name</headerFields>
+        <headerFields>Last Name</headerFields>
+        <headerFields>Email Address</headerFields>
+        <dataFields>Action</dataFields>
+        <dataFields>Target Type</dataFields>
+        <dataFields>Name</dataFields>
+        <dataFields>Value</dataFields>
+      </report>
+    </reports>
   </provisioning>
-  </tremoloConfig>
+</tremoloConfig>

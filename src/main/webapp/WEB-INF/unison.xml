@@ -81,7 +81,7 @@
     </application>
     <application azTimeoutMillis="30000" name="ScaleJS">
       <urls>
-        <url authChain="loginForm" overrideHost="true" overrideReferer="true" regex="false">
+<!--         <url authChain="loginForm" overrideHost="true" overrideReferer="true" regex="false">
           <host>#[OU_HOST]</host>
           <filterChain>
             <filter class="com.tremolosecurity.proxy.filters.RemovePrefix">
@@ -98,30 +98,30 @@
           <azRules>
             <rule constraint="o=Tremolo" scope="dn"/>
           </azRules>
-        </url>
-        <url authChain="loginForm" overrideHost="true" overrideReferer="true" regex="false">
-          <host>#[OU_HOST]</host>
-          <filterChain>
-            <filter class="com.tremolosecurity.scalejs.password.ws.ScalePassword">
-              <param name="displayNameAttribute" value="displayName"/>
+        </url> -->
+<!--         <url authChain="loginForm" overrideHost="true" overrideReferer="true" regex="false">
+          <host>#[OU_HOST]</host> -->
+          <!-- <filterChain> -->
+            <!-- <filter class="com.tremolosecurity.scalejs.password.ws.ScalePassword"> -->
+              <!-- <param name="displayNameAttribute" value="displayName"/> -->
               <!-- The title to show on the home page -->
-              <param name="frontPage.title" value="FreeIPA Password Reset"/>
+              <!-- <param name="frontPage.title" value="FreeIPA Password Reset"/> -->
               <!-- Sub text for the home page -->
-              <param name="frontPage.text" value="Please enter your new password.  Your password must have an upper case, lower case, numeric and special character.  The password must be at least 8 characters long and not longer then 20.  Also, 3 consecutive characters from your first name, last name or user id can not appear in it."/>
+              <!-- <param name="frontPage.text" value="Please enter your new password.  Your password must have an upper case, lower case, numeric and special character.  The password must be at least 8 characters long and not longer then 20.  Also, 3 consecutive characters from your first name, last name or user id can not appear in it."/> -->
               <!-- The URL to access ScaleMain -->
-              <param name="homeURL" value="/scale/index.html"/>
+              <!-- <param name="homeURL" value="/scale/index.html"/> -->
               <!-- The URL to redirect the user to when they logout -->
-              <param name="logoutURL" value="/logout"/>
+              <!-- <param name="logoutURL" value="/logout"/> -->
               <!-- The name of the attribute that identifies the user uniquely -->
-              <param name="uidAttributeName" value="uid"/>
+              <!-- <param name="uidAttributeName" value="uid"/> -->
               <!-- Reason for the workflow -->
-              <param name="reason" value="Password reset"/>
+              <!-- <param name="reason" value="Password reset"/> -->
               <!-- Workflow for the password reset call -->
-              <param name="workflowName" value="ipa-password-self-reset"/>
+              <!-- <param name="workflowName" value="ipa-password-self-reset"/> -->
               <!-- Implementation of com.tremolosecurity.scalejs.password.sdk.PasswordValidator -->
-              <param name="validatorClassName" value="com.tremolosecurity.scalejs.password.validators.ActiveDirectoryValidator"/>
+              <!-- <param name="validatorClassName" value="com.tremolosecurity.scalejs.password.validators.ActiveDirectoryValidator"/> -->
               <!-- List of parameters for the validator -->
-              <param name="validator.params" value="requireLower=true"/>
+<!--               <param name="validator.params" value="requireLower=true"/>
               <param name="validator.params" value="requireUpper=true"/>
               <param name="validator.params" value="requireNumber=true"/>
               <param name="validator.params" value="requireSpecial=true"/>
@@ -131,18 +131,18 @@
               <param name="validator.params" value="attributesToCheck=Last Name=sn"/>
               <param name="validator.params" value="attributesToCheck=User Name=uid"/>
               <param name="validator.params" value="attributesToCheck=First Name=givenName"/>
-              <param name="synchronous" value="true"/>
-            </filter>
-          </filterChain>
-          <uri>/scale-reset/password</uri>
-          <results>
+              <param name="synchronous" value="true"/> -->
+            <!-- </filter> -->
+          <!-- </filterChain> -->
+          <!-- <uri>/scale-reset/password</uri> -->
+<!--           <results>
             <auFail>noauaz</auFail>
             <azFail>noauaz</azFail>
           </results>
           <azRules>
             <rule constraint="o=Tremolo" scope="dn"/>
           </azRules>
-        </url> 
+        </url>  -->
         <url authChain="resetPassword" overrideHost="true" overrideReferer="true" regex="false">
           <host>#[OU_HOST]</host>
           <filterChain>

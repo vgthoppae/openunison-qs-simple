@@ -224,6 +224,31 @@
         <scope>-1</scope>
       </cookieConfig>
     </application>
+    <application azTimeoutMillis="30000" name="anonfiles">
+      <urls>
+        <url authChain="anon" overrideHost="true" overrideReferer="true" regex="false">
+          <host>#[OU_HOST]</host>
+          <filterChain/>
+          <uri>/favicon.ico</uri>
+          <results>
+            <azSuccess/>
+          </results>
+          <azRules>
+            <rule constraint="o=Tremolo" scope="dn"/>
+          </azRules>
+        </url>
+      </urls>
+      <cookieConfig>
+        <sessionCookieName>anon</sessionCookieName>
+        <domain>*</domain>
+        <logoutURI>/favicon.ico</logoutURI>
+        <keyAlias>session-unison</keyAlias>
+        <secure>false</secure>
+        <timeout>true</timeout>
+        <scope>-1</scope>
+      </cookieConfig>
+    </application>
+    
   </applications>
   <myvdConfig>WEB-INF/myvd.conf</myvdConfig>
   <authMechs>
